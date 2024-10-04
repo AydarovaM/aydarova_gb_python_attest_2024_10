@@ -1,4 +1,6 @@
 from Note import Note
+from datetime import datetime
+import json
 
 class Notebook:
     def __init__(self):
@@ -30,12 +32,41 @@ class Notebook:
         print("All Notes:")
         for note in self.notes:
             print(note.to_string())
+            print("")
         print("End of Notes")
 
     def print_all_titles_and_id(self):
         print("All Notes:")
         for note in self.notes:
             print(note.to_string_id_and_title())
+            print("")
         print("End of Notes")
     
+    def print_in_range(self, start_date, end_date):
+        print(f"All notes in range: {start_date} .. {end_date}")
+        for note in self.notes:
+            if note.check_if_date_in_range(start_date, end_date):
+                print(note.to_string())
+                print("")
+        print("End of Notes")
 
+    def toJSON(self):
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__, 
+            sort_keys=True,
+            indent=4)
+    
+    @staticmethod
+    def fromJSON(last_id, notes):
+        notebook = Notebook()
+        notebook.last_id = last_id
+        notebook.notes = []
+        print("notes")
+        for i in notes:
+            note = Note.from_dict(i["id"], i["date"], i["title"], i["text"])
+            notebook.add_note(note)
+            print(i)
+        
+        #notebook.notes = Note[](notes)
+        return notebook

@@ -1,0 +1,29 @@
+{
+    "last_id": 3,
+    "notes": [
+        {
+            "date": "2010-10-10",
+            "id": 0,
+            "text": "TestText",
+            "title": "TestTitle"
+        },
+        {
+            "date": "2012-10-10",
+            "id": 1,
+            "text": "TestText2",
+            "title": "TestTitle2"
+        },
+        {
+            "date": "2014-10-10",
+            "id": 2,
+            "text": "TestText3",
+            "title": "TestTitle3"
+        },
+        {
+            "date": "2024-10-04",
+            "id": 3,
+            "text": "Some handcrafted text.",
+            "title": "Manually created note"
+        }
+    ]
+}

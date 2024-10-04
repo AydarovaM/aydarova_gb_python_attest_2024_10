@@ -9,16 +9,21 @@
 from datetime import datetime
 from Note import Note
 from Notebook import Notebook
+import json
 
-def main():
-    notebook = Notebook()
+def main(): 
     print("==Notes app==")
+    #add_test_notes(notebook)
+    notebook = load_from_json()
+    if type(notebook) is not Notebook:
+        notebook = Notebook()
+
     want_to_exit = False
     while(not want_to_exit):
         want_to_exit = handle_input(notebook)
 
 def handle_input(notebook) -> bool:
-    answer = input("Enter 0 to exit, 1 to output test note, 2 to create note, 3 to print all notes, 4 to enter delete mode, 5 to enter edit mode:\n")
+    answer = input("Enter 0 to exit,\n1 to output test note,\n2 to create note,\n3 to print all notes,\n4 to enter delete mode,\n5 to enter edit mode,\n6 to print note in date range,\n7 - to save to json-file:\n")
     answer = answer.lower().strip()
     if answer == "0":
         return True
@@ -36,6 +41,10 @@ def handle_input(notebook) -> bool:
         delete_note(notebook)
     if answer == "5":
         edit_mode(notebook)    
+    if answer == "6":
+        date_range_mode(notebook)    
+    if answer == "7":
+        save_to_file(notebook)    
     
     return False
 
@@ -44,6 +53,18 @@ def print_test_note():
     print(date)
     note = Note(0, date, "TestTitle", "TestText")
     print(note.to_string())
+
+def add_test_notes(notebook):
+    note_0 = Note(0, datetime(2010, 10, 10), "TestTitle", "TestText")
+    note_1 = Note(1, datetime(2012, 10, 10), "TestTitle2", "TestText2")
+    note_2 = Note(2, datetime(2014, 10, 10), "TestTitle3", "TestText3")
+    note_3 = Note(3, datetime(2016, 10, 10), "TestTitle4", "TestText4")
+    notebook.add_note(note_0)
+    notebook.add_note(note_1)
+    notebook.add_note(note_2)
+    notebook.add_note(note_3)
+
+    
 
 def create_note(id) -> Note:
     print("Create new note")
@@ -76,6 +97,12 @@ def get_note_id(notebook, title, input_text) -> int:
     note_id = int(note_id_str)
     return note_id
 
+def get_date(input_text) -> datetime:
+    format = '%Y-%m-%d'
+    date_str = input(f"{input_text} in format: {format}\n")
+    date_parsed = datetime.strptime(date_str, format)
+    return date_parsed
+
 def edit_mode(notebook):
     print("EDIT MODE!")
     note_id = get_note_id(notebook, "Select is of note to edit:", "Enter note's id to edit:")
@@ -102,5 +129,24 @@ def edit_mode(notebook):
     if was_changed:
         note_to_edit.date = datetime.now()
 
+def date_range_mode(notebook):
+    print("Select range!")
+    start_date = get_date("Input start date")
+    end_date = get_date("Input end date")
+    notebook.print_in_range(start_date, end_date)
+
+def save_to_file(notebook):
+    json_data = notebook.toJSON() 
+    print("saved to file: notes.txt")
+    with open("notes.txt", "w") as text_file:
+        text_file.write(json_data)
+
+def load_from_json() -> Notebook:
+    with open('notes.txt') as f:
+        print("loaded from file: notes.txt")
+        json_data = f.read()
+        j = json.loads(json_data)
+        notebook = Notebook.fromJSON(**j)
+        return notebook
 
 main()
